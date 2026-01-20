@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404
 from .models import Book
 from django.shortcuts import redirect
+from django.forms import BookForm
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, book_id):
@@ -54,3 +55,16 @@ def delete_book(request, id):
     book = get_object_or_404(Book, id=id)
     book.delete()
     return redirect('book_list')
+
+
+def book_list(request):
+    books = Book.objects.all()  # ORM = safe
+    return render(request, "bookshelf/book_list.html", {"books": books})
+
+def book_list(request):
+    response = render(request, "bookshelf/book_list.html")
+    response["Content-Security-Policy"] = "default-src 'self'"
+    return response
+
+# ORM used to prevent SQL injection
+# CSP header added for XSS protection
