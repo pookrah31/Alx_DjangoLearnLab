@@ -7,6 +7,7 @@ from .models import Book
 from django.shortcuts import redirect
 from django.forms import BookForm
 from .forms import ExampleForm
+from django.contrib.auth.decorators import login_required, permission_required
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, book_id):
@@ -69,3 +70,22 @@ def book_list(request):
 
 # ORM used to prevent SQL injection
 # CSP header added for XSS protection
+
+# List books view (read-only)
+@login_required
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, "bookshelf/book_list.html", {"books": books})
+
+# Secure create book view
+@login_required
+@permission_required("bookshelf.can_create", raise_exception=True)
+def create_book(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("book_list")
+    else:
+        form = ExampleForm()
+    return render(request, "bookshelf/form_example.html", {"form": form})

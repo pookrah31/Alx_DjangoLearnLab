@@ -5,3 +5,14 @@
   {% endfor %}
 </ul>
                           
+{% extends "base.html" %}
+{% block content %}
+<h1>Book List</h1>
+<ul>
+    {% for book in books %}
+    <li>{{ book.title }} by {{ book.author }} ({{ book.publication_year }})</li>
+    {% empty %}
+    <li>No books found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
