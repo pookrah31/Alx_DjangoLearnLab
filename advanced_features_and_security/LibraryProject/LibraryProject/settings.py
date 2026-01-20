@@ -124,17 +124,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'bookshelf',
+    'bookshelf', 'relationship_app'
 ]
 
-INSTALLED_APPS =[
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
-    'relationship_app',
-]
-AUTH_USER_MODEL = 'relationship_app.CustomUser'
+
