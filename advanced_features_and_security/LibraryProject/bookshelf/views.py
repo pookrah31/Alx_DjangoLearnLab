@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Book
 from django.shortcuts import redirect
 from django.forms import BookForm
+from .forms import ExampleForm
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, book_id):
