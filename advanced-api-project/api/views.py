@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Book
 from .serializers import BookSerializer
 
@@ -14,7 +14,7 @@ class BookListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]  # Everyone can access
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Anyone can read
 
 
 # -------------------------------
@@ -28,7 +28,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 # -------------------------------
@@ -43,9 +43,12 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only logged-in users
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        """
+        Customize saving behavior if needed.
+        """
         serializer.save()
 
 
@@ -57,12 +60,16 @@ class BookUpdateView(generics.UpdateAPIView):
     PUT /api/books/<id>/update/
     Updates an existing Book instance.
     Only authenticated users can update books.
+    Handles validation automatically via BookSerializer.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
+        """
+        Customize update behavior here if needed.
+        """
         serializer.save()
 
 
@@ -76,5 +83,3 @@ class BookDeleteView(generics.DestroyAPIView):
     Only authenticated users can delete books.
     """
     queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
