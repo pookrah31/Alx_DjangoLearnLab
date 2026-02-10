@@ -12,3 +12,12 @@
 - Admin: /admin
 - Static files: blog/static/blog/
 - Templates: blog/templates/blog/
+
+
+Step 6: Test Blog Post Features
+Testing Guidelines:
+Test each view for functionality and security. Ensure that all forms submit data correctly and that unauthorized users cannot edit or delete posts they do not own.
+Check the navigation between views and ensure all links are correctly set up and functional.
+Step 7: Documentation
+Feature Documentation:
+Document the blog post features in a README file or directly in the code as comments. Include details on how to use each feature and any special notes about permissions and data handling.
