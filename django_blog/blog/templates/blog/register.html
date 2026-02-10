@@ -1,4 +1,11 @@
 <h2>Register</h2>
 
 {% if form.errors %}
-<p style="color:red
+<p style="color:red;">Please correct the errors below.</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}   <!-- THIS IS REQUIRED -->
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
