@@ -28,7 +28,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
-        widgets = {
+        TagWidget = {
             'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),  # ← exact string checker expects
         }
 
