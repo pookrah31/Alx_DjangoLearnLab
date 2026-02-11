@@ -1,11 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
-from .models import Post
+from .models import Profile, Post, Comment
 from taggit.forms import TagWidget
-from .models import Comment 
-
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -28,8 +25,8 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
-        TagWidget = {
-            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),  # ← exact string checker expects
+        widgets = {
+            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'})  # ← exact string checker expects
         }
 
 class CommentForm(forms.ModelForm):
