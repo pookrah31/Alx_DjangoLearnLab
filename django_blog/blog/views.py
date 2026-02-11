@@ -171,8 +171,12 @@ def search_posts(request):
             Q(tags__name__icontains=query)
         ).distinct()
     return render(request, 'blog/search_results.html', {'query': query, 'results': results})
+class PostByTagListView(ListView):
+    model = Post
+    template_name = "blog/posts_by_tag.html"
+    context_object_name = "posts"
 
-def posts_by_tag(request, tag_slug):
-    tag = get_object_or_404(Tag, slug=tag_slug)
-    posts = Post.objects.filter(tags__slug=tag_slug)
-    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__slug=tag_slug)
+
