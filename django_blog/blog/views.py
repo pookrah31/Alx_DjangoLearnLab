@@ -15,6 +15,8 @@ from django.urls import reverse_lazy
 from .models import Post, Comment
 from .forms import PostForm    
 from .forms import CommentForm
+from django.db.models import Q
+from taggit.models import Tag   
 # Create your views here.
 def register_view(request):
     if request.method == 'POST':
@@ -131,6 +133,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ["title", "content"]
+
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
@@ -196,3 +199,26 @@ class PostDetailView(DetailView):
         context['comments'] = self.object.comments.all().order_by('-created_at')
         context['comment_form'] = CommentForm()
         return context
+
+
+def search_posts(request):
+    query = request.GET.get('q', '')
+    results = Post.objects.none()
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    context = {
+        'query': query,
+        'results': results
+    }
+    return render(request, 'blog/search_results.html', context)
+
+
+
+def posts_by_tag(request, tag_slug):
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    posts = Post.objects.filter(tags__slug=tag_slug)
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
