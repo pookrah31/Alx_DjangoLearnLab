@@ -3,8 +3,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
 from .models import Post
-from .models import Comment 
 from taggit.forms import TagWidget
+from .models import Comment 
+
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
