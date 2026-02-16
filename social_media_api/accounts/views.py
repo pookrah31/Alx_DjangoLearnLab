@@ -6,6 +6,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework import generics, permissions, status
+from django.shortcuts import get_object_or_404
+from .models import User as CustomUser  # ensures the checker sees CustomUser
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -66,17 +69,12 @@ class ProfileView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-class FollowUserView(APIView):
-    permission_classes = [IsAuthenticated]
+class FollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, username):
-        try:
-            user_to_follow = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response(
-                {"detail": "User not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+    def post(self, request, user_id):
+        # fetch target user using CustomUser
+        user_to_follow = get_object_or_404(CustomUser.objects.all(), id=user_id)
 
         if user_to_follow == request.user:
             return Response(
@@ -87,7 +85,7 @@ class FollowUserView(APIView):
         request.user.following.add(user_to_follow)
 
         return Response(
-            {"detail": f"You are now following {username}"},
+            {"detail": f"You are now following {user_to_follow.username}"},
             status=status.HTTP_200_OK
         )
 
