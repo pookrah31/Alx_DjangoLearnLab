@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from requests import request
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,6 +16,7 @@ from .serializers import (
     UserLoginSerializer,
     ProfileSerializer
 )
+from .models import Notification
 
 # Create your views here.
 User = get_user_model()
@@ -83,6 +85,12 @@ class FollowUserView(generics.GenericAPIView):
             )
 
         request.user.following.add(user_to_follow)
+
+        Notification.objects.create(
+            recipient=user_to_follow,
+            actor=request.user,
+            verb="started following you"
+        )
 
         return Response(
             {"detail": f"You are now following {user_to_follow.username}"},
