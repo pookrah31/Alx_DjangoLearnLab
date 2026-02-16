@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model
+from rest_framework import status
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -12,6 +14,7 @@ from .serializers import (
 )
 
 # Create your views here.
+User = get_user_model()
 class RegisterView(APIView):
     permission_classes = []
 
@@ -61,4 +64,48 @@ class ProfileView(APIView):
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
+        )
+    
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, username):
+        try:
+            user_to_follow = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if user_to_follow == request.user:
+            return Response(
+                {"detail": "You cannot follow yourself"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        request.user.following.add(user_to_follow)
+
+        return Response(
+            {"detail": f"You are now following {username}"},
+            status=status.HTTP_200_OK
+        )
+
+class UnfollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, username):
+        try:
+            user_to_unfollow = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        request.user.following.remove(user_to_unfollow)
+
+        return Response(
+            {"detail": f"You unfollowed {username}"},
+            status=status.HTTP_200_OK
         )
