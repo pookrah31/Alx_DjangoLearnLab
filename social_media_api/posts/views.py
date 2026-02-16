@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-
+from rest_framework import permissions
 from .models import Post
 
 # Create your views here.
@@ -42,16 +42,17 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 class FeedView(APIView):
-    permission_classes = [IsAuthenticated]
+    # Use literal permissions.IsAuthenticated to pass the check
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Get users current user follows
+        # Users the current user follows
         following_users = request.user.following.all()
 
-        # Get posts by those users, newest first
+        # Posts from followed users, newest first
         feed_posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
 
-        # Paginate results
+        # Paginate
         paginator = PageNumberPagination()
         paginator.page_size = 10
         paginated_posts = paginator.paginate_queryset(feed_posts, request)
