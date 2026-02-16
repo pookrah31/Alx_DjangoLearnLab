@@ -47,7 +47,7 @@ class UserLoginSerializer(serializers.Serializer):
             username=data['username'],
             password=data['password']
         )
-          if not user:
+        if not user:
             raise serializers.ValidationError("Invalid credentials")
 
         # REQUIRED by checker
