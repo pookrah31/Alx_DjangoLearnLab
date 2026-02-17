@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'social-meadia-api-peniel.herokuapp.com',
+    'https://social-media-api-peniel-1a6fbf772928.herokuapp.com/'
 
 ]
 
@@ -90,9 +91,8 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600,
-        ssl_require=True
+        # This line tells Django to use the DATABASE_URL variable on Heroku
+        default=config('DATABASE_URL', default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}")
     )
 }
 
