@@ -16,7 +16,7 @@ from .serializers import (
     UserLoginSerializer,
     ProfileSerializer
 )
-from .models import Notification
+from notifications.models import Notification
 
 # Create your views here.
 User = get_user_model()
